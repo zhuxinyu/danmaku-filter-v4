@@ -88,13 +88,11 @@ danmaku-filter/
        ↓ 第 3 层 · 兜底：Worker 内 fetch+fillText、主线程 Canvas fillText，仅处理前两层的极少数漏网
   ```
 
-  1. **第 1 层 数据层（主线程 + Worker 内）**：`inject.js` 在页面主世界用 **getter/setter 自修复**地包装 `fetch` / `XMLHttpRequest`，拦截 `api.bilibili.com/.../dm/.../seg.so`（protobuf，文本在 `DanmakuElem.content` field 7）与 `list.so`（XML），在弹幕**绘制前**整条移除含屏蔽词的弹幕。
-     - 关键：Worker 内部也包装 `self.fetch`，因此 B 站播放器在 **Worker 里重新请求弹幕分段**（拖动进度条 / 离开页面恢复 / 滚动加载）时，仍会在数据层被过滤——这是修复「屏蔽几秒/10秒就失效」的核心。
+  1. **第 1 层 数据层（主线程 + Worker 内）**：`inject.js` 在页面主世界用 **getter/setter 自修复**地包装 `fetch` / `XMLHttpRequest`，拦截 `api.*.com/.../dm/.../seg.so`（protobuf，文本在 `DanmakuElem.content` field 7）与 `list.so`（XML），在弹幕**绘制前**整条移除含屏蔽词的弹幕。
   2. **第 2 层 逻辑层（best-effort）**：轮询 `window.player.danmaku` 等弹幕引擎对象，hook 其 `add`/`append`/`send` 等方法，在弹幕进入渲染系统前按同一判定逻辑丢弃。命中后弹幕根本不会进入渲染 / Worker。
   3. **第 3 层 兜底（渲染层）**：`inject.js` **Hook `CanvasRenderingContext2D` 与 `OffscreenCanvasRenderingContext2D` 的 `fillText`/`strokeText`**（主线程 + 经重写的 `window.Worker` 注入到 Worker 全局）。仅用于处理前两层的极少数漏网路径；任何异常均回退原始 Worker，不影响网站。
-  - **自修复机制（修复旧版「缓存初始引用 → 页面重新赋值后失效」）**：所有全局 hook 改用 getter/setter，页面若重新赋值 `window.fetch`/`Worker`，新值会被自动重新包装，旧引用永不「失效」。每 1.5s 幂等重装一次，应对 seek / 恢复 / 运行时重新赋值。
   - 判定逻辑集中在 `judge(text)`，与「如何渲染」解耦；未来若接入更丰富的语义/剧透判断，只需替换该函数，无需改动渲染层。
-- **直播 / DOM 弹幕**（斗鱼、虎牙、B 站直播、快手、微博等）：由 `content/content.js` 基于 **DOM 文本子串匹配**（去空格/标点/大小写归一化）实时隐藏，配合 `MutationObserver` + 定时兜底扫描。
+- **直播 / DOM 弹幕**：由 `content/content.js` 基于 **DOM 文本子串匹配**（去空格/标点/大小写归一化）实时隐藏，配合 `MutationObserver` + 定时兜底扫描。
 - **已知限制**：
   - 极少数完全自绘、不经标准接口下发弹幕数据的播放器，仍可能无法拦截。
   - 各站弹幕 DOM 选择器（见 `content.js` 的 `SITE_SELECTORS`）随站点改版可能失效，需同步更新。
