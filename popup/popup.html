@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="popup.css" />
+    <title>内娱弹幕过滤器</title>
+  </head>
+  <body>
+    <header class="hd">
+      <div class="hd-top">
+        <span class="logo">弹</span>
+        <div class="title">
+          <strong>内娱弹幕过滤器</strong>
+          <small id="stat">已屏蔽 0 / 300</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="enableToggle" checked />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </header>
+
+    <section class="tools">
+      <input type="text" id="search" placeholder="搜索明星人名…" autocomplete="off" />
+      <div class="btn-row">
+        <button id="btnAll" class="btn">全选</button>
+        <button id="btnClear" class="btn">清空</button>
+        <button id="btnReverse" class="btn">反选（仅留一人）</button>
+      </div>
+      <label class="site-toggle" id="siteToggleWrap" hidden>
+        <input type="checkbox" id="siteToggle" />
+        <span>在当前网站关闭过滤（<em id="siteHost"></em>）</span>
+      </label>
+    </section>
+
+    <!-- 屏蔽名单（可展开收起） -->
+    <section class="namelist-section">
+      <div class="section-hd" id="namelistToggle">
+        <span>屏蔽名单</span>
+        <span class="chevron" id="namelistChevron">▾</span>
+      </div>
+      <div class="list-wrap" id="nameListWrap">
+        <ul id="nameList" class="name-list"></ul>
+      </div>
+    </section>
+
+    <!-- 屏蔽记录与频率 -->
+    <section class="stats">
+      <h3 class="stats-hd">
+        屏蔽记录 <span class="muted" id="blockTotal"></span>
+        <button id="btnRefreshStats" class="btn btn-mini" title="刷新">刷新</button>
+      </h3>
+      <div class="stats-sub">按被屏蔽人名统计的频率：</div>
+      <div id="freqList" class="freq-list"></div>
+      <details class="log-details">
+        <summary>最近屏蔽的弹幕内容</summary>
+        <div id="logList" class="log-list"></div>
+      </details>
+    </section>
+
+    <!-- 屏蔽拦截成功关键字列表 -->
+    <section class="stats kw-stats">
+      <h3 class="stats-hd">
+        屏蔽拦截成功关键字
+        <span class="muted" id="kwTotal"></span>
+        <button id="btnRefreshKw" class="btn btn-mini">刷新</button>
+      </h3>
+      <div class="kw-hint">每条：屏蔽关键字 · 该弹幕在视频中出现的时间</div>
+      <div id="kwList" class="kw-list"></div>
+    </section>
+
+    <!-- 反选选择器 -->
+    <div class="modal" id="reverseModal" hidden>
+      <div class="modal-box">
+        <div class="modal-hd">选择要“保留”的那一个人（其余全部屏蔽）</div>
+        <input type="text" id="reverseSearch" placeholder="搜索要保留的人…" autocomplete="off" />
+        <ul id="reverseList" class="reverse-list"></ul>
+        <div class="modal-ft">
+          <button id="reverseCancel" class="btn">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

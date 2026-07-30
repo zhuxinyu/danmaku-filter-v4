@@ -1,0 +1,10 @@
+/* content.css — 仅用于隐藏被屏蔽的弹幕（整条移除） */
+.df-hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}

@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "name": "内娱弹幕过滤器",
+  "version": "1.0.0",
+  "description": "基于内娱人气前300明星人名的弹幕过滤插件，支持多人名屏蔽与一键反选（仅保留某人）。兼容 Chrome / Edge / Firefox / 360 浏览器。（名单为人工整理，非官方榜单）",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "内娱弹幕过滤器",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "*://*.bilibili.com/*",
+    "*://*.douyu.com/*",
+    "*://*.huya.com/*",
+    "*://*.iqiyi.com/*",
+    "*://*.youku.com/*",
+    "*://v.qq.com/*",
+    "*://*.kuaishou.com/*",
+    "*://*.weibo.com/*",
+    "*://*.toutiao.com/*",
+    "*://*.douyin.com/*",
+    "*://mh.yichengwlkj.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.bilibili.com/*",
+        "*://*.douyu.com/*",
+        "*://*.huya.com/*",
+        "*://*.iqiyi.com/*",
+        "*://*.youku.com/*",
+        "*://v.qq.com/*",
+        "*://*.kuaishou.com/*",
+        "*://*.weibo.com/*",
+        "*://*.toutiao.com/*",
+        "*://*.douyin.com/*",
+        "*://mh.yichengwlkj.com/*"
+      ],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": ["*://*.bilibili.com/*", "*://mh.yichengwlkj.com/*"],
+      "js": ["content/inject.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": true
+    }
+  ],
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "danmaku-filter@workbuddy.example",
+      "strict_min_version": "109.0"
+    }
+  }
+}
